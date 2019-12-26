@@ -2,6 +2,7 @@ package ru.mygame.sprite;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
+
 import ru.mygame.base.Sprite;
 import ru.mygame.math.Rect;
 
