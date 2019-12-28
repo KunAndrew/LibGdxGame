@@ -13,6 +13,7 @@ public class Sprite extends Rect {
     protected TextureRegion[] regions;
     protected int frame;
 
+
     public Sprite(TextureRegion region) {
         if (region == null) {
             throw new NullPointerException("Region is null");
@@ -30,7 +31,7 @@ public class Sprite extends Rect {
     public void draw(SpriteBatch batch) {
         batch.draw(
                 regions[frame],
-                getLeft(), getBottom(),
+                getLeft(),getBottom(),
                 halfWidth, halfHeight,
                 getWidth(), getHeight(),
                 scale, scale,
