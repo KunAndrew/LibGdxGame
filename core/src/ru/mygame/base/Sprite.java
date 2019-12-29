@@ -4,8 +4,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
-import java.awt.Event;
-
 import ru.mygame.math.Rect;
 
 public class Sprite extends Rect {
@@ -14,10 +12,6 @@ public class Sprite extends Rect {
     protected float scale = 1f;
     protected TextureRegion[] regions;
     protected int frame;
-    public Vector2 v = new Vector2(0f, 0f);
-    public Vector2 posSprite = new Vector2(0f, 0f);
-    public boolean move = false;
-    public Vector2 posTouch = new Vector2(0f, 0f);
 
 
     public Sprite(TextureRegion region) {
@@ -35,17 +29,14 @@ public class Sprite extends Rect {
     }
 
     public void draw(SpriteBatch batch) {
-        moveChek();
-
         batch.draw(
                 regions[frame],
-                getLeft() + posSprite.x, getBottom() + posSprite.y,
+                getLeft(),getBottom(),
                 halfWidth, halfHeight,
                 getWidth(), getHeight(),
                 scale, scale,
                 angle
         );
-
     }
 
     public void resize(Rect worldBounds) {
@@ -82,8 +73,5 @@ public class Sprite extends Rect {
 
     public void setScale(float scale) {
         this.scale = scale;
-    }
-
-    public void moveChek() {
     }
 }

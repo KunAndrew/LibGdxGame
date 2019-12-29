@@ -11,7 +11,7 @@ import com.badlogic.gdx.math.Vector2;
 import ru.mygame.math.MatrixUtils;
 import ru.mygame.math.Rect;
 
-public abstract class BaseScreen implements Screen, InputProcessor {
+public class BaseScreen implements Screen, InputProcessor {
 
     protected SpriteBatch batch;
 
@@ -60,7 +60,6 @@ public abstract class BaseScreen implements Screen, InputProcessor {
 
     public void resize(Rect worldBounds) {
         System.out.println("resize worldBounds width = " + worldBounds.getWidth() + " height = " + worldBounds.getHeight());
-
     }
 
     @Override
@@ -152,6 +151,4 @@ public abstract class BaseScreen implements Screen, InputProcessor {
         System.out.println("scrolled amount = " + amount);
         return false;
     }
-
-
 }
