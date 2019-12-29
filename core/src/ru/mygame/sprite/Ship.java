@@ -9,6 +9,8 @@ import com.badlogic.gdx.math.Vector2;
 
 import ru.mygame.base.Sprite;
 import ru.mygame.math.Rect;
+import ru.mygame.math.Rnd;
+import ru.mygame.pool.BulletPool;
 
 
 public class Ship extends Sprite {
@@ -25,13 +27,27 @@ public class Ship extends Sprite {
     private Vector2 vDown;
     private boolean touched=false;
 
+    private BulletPool bulletPool;
+    private TextureRegion bulletRegion;
+    private float bulletHeight;
+    private Vector2 bulletV;
+    private int damage;
+    private float bulletAnimateTimer;
+    private float bulletAnimateInterval;
 
-    public Ship(TextureAtlas atlas) {
+
+    public Ship(TextureAtlas atlas, BulletPool bulletPool) {
         super(new TextureRegion(atlas.findRegion("main_ship").getTexture(),
                 atlas.findRegion("main_ship").getRegionX(),
                 atlas.findRegion("main_ship").getRegionY(),
                 atlas.findRegion("main_ship").getRegionWidth() / 2,
                 atlas.findRegion("main_ship").getRegionHeight()));
+
+        this.bulletPool = bulletPool;
+        bulletRegion = atlas.findRegion("bulletMainShip");
+        bulletHeight = 0.01f;
+        bulletV = new Vector2(0, 0.5f);
+        damage = 1;
         height = 0.2f;
         v=new Vector2(0,0f);
         vR=new Vector2(0.1f,0f);
@@ -40,6 +56,8 @@ public class Ship extends Sprite {
         vDown=new Vector2(0f,-0.1f);
         endPoint=new Vector2();
         buff=new Vector2();
+        bulletAnimateInterval = 0.3f;
+        bulletAnimateTimer = 0f;
     }
 
 
@@ -62,6 +80,12 @@ public class Ship extends Sprite {
                 pos.set(endPoint);
                 touched=false;
             }
+        }
+        bulletAnimateTimer += delta;
+        if (bulletAnimateTimer > bulletAnimateInterval) {
+            bulletAnimateTimer = 0f;
+            //height = 0.01f;
+            shoot();
         }
     }
 
@@ -102,6 +126,7 @@ private void moveRight() {
     }
     private void moveUp() {
         v.set(vUp);
+        //shoot();
     }
     private void moveDown() {
         v.set(vDown);
@@ -109,6 +134,11 @@ private void moveRight() {
 
     private void stop() {
         v.setZero();
+    }
+
+    private void shoot() {
+        Bullet bullet = bulletPool.obtain();
+        bullet.set(this, bulletRegion, pos, bulletV, bulletHeight, worldBounds, damage);
     }
 
 
