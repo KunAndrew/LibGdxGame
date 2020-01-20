@@ -1,18 +1,14 @@
 package ru.mygame.sprite;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
-
 import ru.mygame.base.Ship;
-import ru.mygame.base.Sprite;
 import ru.mygame.math.Rect;
-import ru.mygame.math.Rnd;
 import ru.mygame.pool.BulletPool;
+import ru.mygame.pool.ExplosionPool;
 
 
 public class MainShip extends Ship {
@@ -25,9 +21,10 @@ public class MainShip extends Ship {
     private int leftPointer = INVALID_POINTER;
     private int rightPointer = INVALID_POINTER;
 
-    public MainShip(TextureAtlas atlas, BulletPool bulletPool, Sound shootSound) {
+    public MainShip(TextureAtlas atlas, BulletPool bulletPool, ExplosionPool explosionPool, Sound shootSound) {
         super(atlas.findRegion("main_ship"), 1, 2, 2);
         this.bulletPool = bulletPool;
+        this.explosionPool = explosionPool;
         this.shootSound = shootSound;
         this.bulletRegion = atlas.findRegion("bulletMainShip");
         this.bulletHeight = 0.01f;
@@ -37,7 +34,7 @@ public class MainShip extends Ship {
         this.v0 = new Vector2(0.5f, 0);
         this.reloadInterval = 0.25f;
         this.reloadTimer = 0f;
-        this.hp = 100;
+        this.hp = 10;
     }
 
     @Override
@@ -142,6 +139,15 @@ public class MainShip extends Ship {
                 break;
         }
         return false;
+    }
+
+    public boolean isBulletCollision(Rect bullet) {
+        return !(
+                bullet.getRight() < getLeft()
+                        || bullet.getLeft() > getRight()
+                        || bullet.getBottom() > pos.y
+                        || bullet.getTop() < getBottom()
+        );
     }
 
     private void moveRight() {
