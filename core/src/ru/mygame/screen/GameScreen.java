@@ -16,6 +16,7 @@ import ru.mygame.math.Rect;
 import ru.mygame.pool.BulletPool;
 import ru.mygame.pool.EnemyPool;
 import ru.mygame.sprite.Background;
+import ru.mygame.sprite.Bullet;
 import ru.mygame.sprite.EnemyShip;
 import ru.mygame.sprite.MainShip;
 import ru.mygame.sprite.Star;
@@ -132,6 +133,22 @@ public class GameScreen extends BaseScreen {
             if (!enemyShip.isOutside(mainShip)) {
                 enemyShip.destroy();
             }
+        }
+
+        List<Bullet> bullets=bulletPool.getActiveObjects();
+        for (Bullet bullet : bullets) {
+            if (bullet.getOwner()==mainShip){
+                for (EnemyShip enemyShip : enemyShipList) {
+                    if (!enemyShip.isOutside(bullet)) {
+                        enemyShip.setHp(enemyShip.getHp()-1);
+                        bullet.destroy();
+                        if (enemyShip.getHp()<=0) {
+                            enemyShip.destroy();
+                        }
+                    }
+                }
+            }
+
         }
     }
 
