@@ -13,6 +13,7 @@ import ru.mygame.pool.ExplosionPool;
 
 public class MainShip extends Ship {
 
+    private static final int HP = 100;
     private static final int INVALID_POINTER = -1;
 
     private boolean pressedLeft;
@@ -34,7 +35,18 @@ public class MainShip extends Ship {
         this.v0 = new Vector2(0.5f, 0);
         this.reloadInterval = 0.25f;
         this.reloadTimer = 0f;
-        this.hp = 10;
+        this.hp = HP;
+    }
+
+    public void starNewGame() {
+        this.hp = HP;
+        this.pressedRight = false;
+        this.pressedLeft = false;
+        this.leftPointer = INVALID_POINTER;
+        this.rightPointer = INVALID_POINTER;
+        stop();
+        this.pos.x = worldBounds.pos.x;
+        flushDestroy();
     }
 
     @Override
@@ -148,6 +160,10 @@ public class MainShip extends Ship {
                         || bullet.getBottom() > pos.y
                         || bullet.getTop() < getBottom()
         );
+    }
+
+    public int getHP() {
+        return hp;
     }
 
     private void moveRight() {
