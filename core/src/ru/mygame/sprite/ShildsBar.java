@@ -7,27 +7,32 @@ import ru.mygame.base.BaseScreen;
 import ru.mygame.base.Sprite;
 import ru.mygame.math.Rect;
 
-public class HPbar extends Sprite {
+public class ShildsBar extends Sprite {
+    private final float FULL_SHP = 0.8f;
+    private int shp;
     private MainShip mainship;
-    public HPbar(TextureRegion region, MainShip ship, BaseScreen screen) {
+    public ShildsBar(TextureRegion region, MainShip ship, BaseScreen screen) {
         super(region);
+        this.shp=ship.getSHP();
         this.mainship=ship;
     }
 
     public void resize(Rect worldBounds) {
         super.resize(worldBounds);
         setHeightProportion(0.025f);
-        setBottom(worldBounds.getBottom() + 0.01f);
+        setBottom(worldBounds.getBottom() + 0.04f);
         setLeft(worldBounds.getLeft());
     }
 
     @Override
     public void update(float delta) {
         super.update(delta);
+        shp=mainship.getHP();
     }
-
     @Override
     public void draw(SpriteBatch batch) {
-        super.drawWithPercent(batch,mainship.getHP()/(float)mainship.HP);
+        super.drawWithPercent(batch,mainship.getSHP()/(float)mainship.SHP);
     }
+
 }
+

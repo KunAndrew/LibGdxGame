@@ -33,6 +33,7 @@ public class Ship extends Sprite {
     protected float damageAnimateTimer = damageAnimateInterval;
 
     protected int hp;
+    protected int shp;
 
     public Ship() {
         super();

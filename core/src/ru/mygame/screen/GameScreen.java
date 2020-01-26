@@ -25,6 +25,7 @@ import ru.mygame.sprite.EnemyShip;
 import ru.mygame.sprite.HPbar;
 import ru.mygame.sprite.MainShip;
 import ru.mygame.sprite.MessageGameOver;
+import ru.mygame.sprite.ShildsBar;
 import ru.mygame.sprite.Star;
 import ru.mygame.sprite.TrackingStar;
 import ru.mygame.utils.EnemyGenerator;
@@ -36,6 +37,7 @@ public class GameScreen extends BaseScreen {
 
     private static final String FRAGS = "Frags: ";
     private static final String HP = "HP: ";
+    private static final String SHP = "SHP: ";
     private static final String LEVEL = "Level: ";
 
     private enum State {PAYING, GAME_OVER}
@@ -43,7 +45,9 @@ public class GameScreen extends BaseScreen {
     private Texture bg;
     private TextureAtlas atlas;
     private Texture hp;
+    private Texture shp;
     private HPbar HPbar;
+    private ShildsBar SHPbar;
 
     private Background background;
     private TrackingStar[] stars;
@@ -79,6 +83,7 @@ public class GameScreen extends BaseScreen {
         frags = 0;
         bg = new Texture("textures/bg.png");
         hp=new Texture("textures/HPbar.png");
+        shp=new Texture("textures/SHPbar.png");
         background = new Background(new TextureRegion(bg));
         atlas = new TextureAtlas(Gdx.files.internal("textures/mainAtlas.tpack"));
         laserSound = Gdx.audio.newSound(Gdx.files.internal("sounds/laser.wav"));
@@ -89,7 +94,8 @@ public class GameScreen extends BaseScreen {
         explosionPool = new ExplosionPool(atlas, explosionSound);
         enemyPool = new EnemyPool(bulletPool, explosionPool, bulletSound, worldBounds);
         mainShip = new MainShip(atlas, bulletPool, explosionPool, laserSound);
-        HPbar=new HPbar(new TextureRegion(hp),mainShip);
+        HPbar=new HPbar(new TextureRegion(hp),mainShip,this);
+        SHPbar=new ShildsBar(new TextureRegion(shp),mainShip,this);
         enemyGenerator = new EnemyGenerator(atlas, enemyPool, worldBounds);
         messageGameOver = new MessageGameOver(atlas);
         buttonNewGame = new ButtonNewGame(atlas, this);
@@ -126,6 +132,7 @@ public class GameScreen extends BaseScreen {
         messageGameOver.resize(worldBounds);
         buttonNewGame.resize(worldBounds);
         HPbar.resize(worldBounds);
+        SHPbar.resize(worldBounds);
         font.setSize(FONT_SIZE);
     }
 
@@ -141,6 +148,7 @@ public class GameScreen extends BaseScreen {
         bulletSound.dispose();
         explosionSound.dispose();
         hp.dispose();
+        shp.dispose();
         super.dispose();
     }
 
@@ -281,8 +289,9 @@ public class GameScreen extends BaseScreen {
         font.draw(batch, sbFrags.append(FRAGS).append(frags),
                 worldBounds.getLeft() + FONT_PADDING, worldBounds.getTop() - FONT_PADDING);
         /*font.draw(batch, sbHp.append(HP).append(mainShip.getHP()),
-                worldBounds.pos.x, worldBounds.getTop() - FONT_PADDING, Align.center);*/  //Count hp view for debug
-        HPbar.drawWithPercent(batch,mainShip.getHP()/100f);
+                worldBounds.pos.x, worldBounds.getTop() - FONT_PADDING, Align.center); */ //Count hp view for debug
+        HPbar.draw(batch);
+        SHPbar.draw(batch);
         font.draw(batch, sbLevel.append(LEVEL).append(enemyGenerator.getLevel()),
                 worldBounds.getRight() - FONT_PADDING, worldBounds.getTop() - FONT_PADDING, Align.right);
     }
