@@ -46,6 +46,23 @@ public class Sprite extends Rect {
                 angle
         );
     }
+    public void drawWithPercent(SpriteBatch batch,float percent) {
+        batch.draw(
+                regions[frame],
+                getLeft(), getBottom(),
+                halfWidth, halfHeight,
+                getWidth()*percent, getHeight(),
+                scale, scale,
+                angle
+
+                /*regions[frame],
+                getLeft(), getBottom(),
+                halfWidth, halfHeight,
+                getWidth(), getHeight(),
+                scale*percent, scale,
+                angle*/
+        );
+    }
 
     public void resize(Rect worldBounds) {
 

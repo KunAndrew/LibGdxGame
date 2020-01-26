@@ -22,6 +22,7 @@ import ru.mygame.sprite.Background;
 import ru.mygame.sprite.Bullet;
 import ru.mygame.sprite.ButtonNewGame;
 import ru.mygame.sprite.EnemyShip;
+import ru.mygame.sprite.HPbar;
 import ru.mygame.sprite.MainShip;
 import ru.mygame.sprite.MessageGameOver;
 import ru.mygame.sprite.Star;
@@ -41,6 +42,8 @@ public class GameScreen extends BaseScreen {
 
     private Texture bg;
     private TextureAtlas atlas;
+    private Texture hp;
+    private HPbar HPbar;
 
     private Background background;
     private TrackingStar[] stars;
@@ -75,6 +78,7 @@ public class GameScreen extends BaseScreen {
         super.show();
         frags = 0;
         bg = new Texture("textures/bg.png");
+        hp=new Texture("textures/HPbar.png");
         background = new Background(new TextureRegion(bg));
         atlas = new TextureAtlas(Gdx.files.internal("textures/mainAtlas.tpack"));
         laserSound = Gdx.audio.newSound(Gdx.files.internal("sounds/laser.wav"));
@@ -85,6 +89,7 @@ public class GameScreen extends BaseScreen {
         explosionPool = new ExplosionPool(atlas, explosionSound);
         enemyPool = new EnemyPool(bulletPool, explosionPool, bulletSound, worldBounds);
         mainShip = new MainShip(atlas, bulletPool, explosionPool, laserSound);
+        HPbar=new HPbar(new TextureRegion(hp),mainShip);
         enemyGenerator = new EnemyGenerator(atlas, enemyPool, worldBounds);
         messageGameOver = new MessageGameOver(atlas);
         buttonNewGame = new ButtonNewGame(atlas, this);
@@ -120,6 +125,7 @@ public class GameScreen extends BaseScreen {
         mainShip.resize(worldBounds);
         messageGameOver.resize(worldBounds);
         buttonNewGame.resize(worldBounds);
+        HPbar.resize(worldBounds);
         font.setSize(FONT_SIZE);
     }
 
@@ -134,6 +140,7 @@ public class GameScreen extends BaseScreen {
         laserSound.dispose();
         bulletSound.dispose();
         explosionSound.dispose();
+        hp.dispose();
         super.dispose();
     }
 
@@ -273,8 +280,9 @@ public class GameScreen extends BaseScreen {
         sbLevel.setLength(0);
         font.draw(batch, sbFrags.append(FRAGS).append(frags),
                 worldBounds.getLeft() + FONT_PADDING, worldBounds.getTop() - FONT_PADDING);
-        font.draw(batch, sbHp.append(HP).append(mainShip.getHP()),
-                worldBounds.pos.x, worldBounds.getTop() - FONT_PADDING, Align.center);
+        /*font.draw(batch, sbHp.append(HP).append(mainShip.getHP()),
+                worldBounds.pos.x, worldBounds.getTop() - FONT_PADDING, Align.center);*/  //Count hp view for debug
+        HPbar.drawWithPercent(batch,mainShip.getHP()/100f);
         font.draw(batch, sbLevel.append(LEVEL).append(enemyGenerator.getLevel()),
                 worldBounds.getRight() - FONT_PADDING, worldBounds.getTop() - FONT_PADDING, Align.right);
     }
