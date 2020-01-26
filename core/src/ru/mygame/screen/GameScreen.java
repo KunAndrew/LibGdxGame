@@ -1,5 +1,6 @@
 package ru.mygame.screen;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
@@ -18,14 +19,23 @@ import ru.mygame.pool.EnemyPool;
 import ru.mygame.pool.ExplosionPool;
 import ru.mygame.sprite.Background;
 import ru.mygame.sprite.Bullet;
+import ru.mygame.sprite.ButtonNewGame;
 import ru.mygame.sprite.EnemyShip;
+import ru.mygame.sprite.GameOver;
 import ru.mygame.sprite.MainShip;
 import ru.mygame.sprite.Star;
 import ru.mygame.utils.EnemyGenerator;
 
 public class GameScreen extends BaseScreen {
+protected Game game;
 
-    private enum State {PAYING, GAME_OVER}
+
+    public GameScreen(Game game) {
+        super();
+        this.game=game;
+    }
+
+    protected enum State {PLAYING, GAME_OVER}
 
     private Texture bg;
     private TextureAtlas atlas;
@@ -34,6 +44,8 @@ public class GameScreen extends BaseScreen {
     private Star[] stars;
 
     private MainShip mainShip;
+    private GameOver gameOver;
+    private ButtonNewGame buttonNewGame;
 
     private BulletPool bulletPool;
     private EnemyPool enemyPool;
@@ -67,9 +79,11 @@ public class GameScreen extends BaseScreen {
         enemyPool = new EnemyPool(bulletPool, explosionPool, bulletSound, worldBounds);
         mainShip = new MainShip(atlas, bulletPool, explosionPool, laserSound);
         enemyGenerator = new EnemyGenerator(atlas, enemyPool, worldBounds);
+        gameOver=new GameOver(atlas);
+        buttonNewGame=new ButtonNewGame(atlas,game);
         music.setLooping(true);
         music.play();
-        state = State.PAYING;
+        state = State.PLAYING;
     }
 
     @Override
@@ -89,6 +103,8 @@ public class GameScreen extends BaseScreen {
             star.resize(worldBounds);
         }
         mainShip.resize(worldBounds);
+        gameOver.resize(worldBounds);
+        buttonNewGame.resize(worldBounds);
     }
 
     @Override
@@ -107,23 +123,28 @@ public class GameScreen extends BaseScreen {
 
     @Override
     public boolean touchDown(Vector2 touch, int pointer, int button) {
-        if (state == State.PAYING) {
+
+        if (state == State.PLAYING) {
             mainShip.touchDown(touch, pointer, button);
+        }else{
+            buttonNewGame.touchDown(touch, pointer, button);
         }
         return false;
     }
 
     @Override
     public boolean touchUp(Vector2 touch, int pointer, int button) {
-        if (state == State.PAYING) {
+        if (state == State.PLAYING) {
             mainShip.touchUp(touch, pointer, button);
+        }else{
+            buttonNewGame.touchUp(touch, pointer, button);
         }
         return false;
     }
 
     @Override
     public boolean keyDown(int keycode) {
-        if (state == State.PAYING) {
+        if (state == State.PLAYING) {
             mainShip.keyDown(keycode);
         }
         return false;
@@ -131,7 +152,7 @@ public class GameScreen extends BaseScreen {
 
     @Override
     public boolean keyUp(int keycode) {
-        if (state == State.PAYING) {
+        if (state == State.PLAYING) {
             mainShip.keyUp(keycode);
         }
         return false;
@@ -142,7 +163,7 @@ public class GameScreen extends BaseScreen {
             star.update(delta);
         }
         explosionPool.updateActiveSprites(delta);
-        if (state == State.PAYING) {
+        if (state == State.PLAYING) {
             mainShip.update(delta);
             bulletPool.updateActiveSprites(delta);
             enemyPool.updateActiveSprites(delta);
@@ -151,7 +172,7 @@ public class GameScreen extends BaseScreen {
     }
 
     private void checkCollisions() {
-        if (state != State.PAYING) {
+        if (state != State.PLAYING) {
             return;
         }
         List<EnemyShip> enemyShipList = enemyPool.getActiveObjects();
@@ -183,6 +204,7 @@ public class GameScreen extends BaseScreen {
         }
         if (mainShip.isDestroyed()) {
             state = State.GAME_OVER;
+
         }
     }
 
@@ -198,15 +220,26 @@ public class GameScreen extends BaseScreen {
 
         batch.begin();
         background.draw(batch);
+
         for (Star star : stars) {
             star.draw(batch);
         }
         explosionPool.drawActiveSprites(batch);
-        if (state == State.PAYING) {
+        if (state == State.PLAYING) {
             mainShip.draw(batch);
             bulletPool.drawActiveSprites(batch);
             enemyPool.drawActiveSprites(batch);
+        }else{
+            gameOver.draw(batch);
+            buttonNewGame.draw(batch);
         }
         batch.end();
+    }
+    public void setStatePlaining() {
+        this.state = State.PLAYING;
+    }
+
+    public Game getGame() {
+        return game;
     }
 }
