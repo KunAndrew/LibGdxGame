@@ -22,6 +22,7 @@ import ru.mygame.sprite.Background;
 import ru.mygame.sprite.Bullet;
 import ru.mygame.sprite.ButtonNewGame;
 import ru.mygame.sprite.EnemyShip;
+import ru.mygame.sprite.EngineTrace;
 import ru.mygame.sprite.HPbar;
 import ru.mygame.sprite.MainShip;
 import ru.mygame.sprite.MessageGameOver;
@@ -39,13 +40,15 @@ public class GameScreen extends BaseScreen {
     private static final String HP = "HP: ";
     private static final String SHP = "SHP: ";
     private static final String LEVEL = "Level: ";
+    private Texture ETtexture;
 
-    private enum State {PAYING, GAME_OVER}
+    private enum State {PLAYING, GAME_OVER}
 
     private Texture bg;
     private TextureAtlas atlas;
     private Texture hp;
     private Texture shp;
+    private TextureRegion et;
     private HPbar HPbar;
     private ShildsBar SHPbar;
 
@@ -53,6 +56,7 @@ public class GameScreen extends BaseScreen {
     private TrackingStar[] stars;
 
     private MainShip mainShip;
+    private EngineTrace engineTrace;
 
     private BulletPool bulletPool;
     private EnemyPool enemyPool;
@@ -82,8 +86,10 @@ public class GameScreen extends BaseScreen {
         super.show();
         frags = 0;
         bg = new Texture("textures/bg.png");
-        hp=new Texture("textures/HPbar.png");
-        shp=new Texture("textures/SHPbar.png");
+        hp = new Texture("textures/HPbar.png");
+        shp = new Texture("textures/SHPbar.png");
+        ETtexture = new Texture("textures/et.png");
+        et = new TextureRegion(ETtexture);
         background = new Background(new TextureRegion(bg));
         atlas = new TextureAtlas(Gdx.files.internal("textures/mainAtlas.tpack"));
         laserSound = Gdx.audio.newSound(Gdx.files.internal("sounds/laser.wav"));
@@ -94,8 +100,9 @@ public class GameScreen extends BaseScreen {
         explosionPool = new ExplosionPool(atlas, explosionSound);
         enemyPool = new EnemyPool(bulletPool, explosionPool, bulletSound, worldBounds);
         mainShip = new MainShip(atlas, bulletPool, explosionPool, laserSound);
-        HPbar=new HPbar(new TextureRegion(hp),mainShip,this);
-        SHPbar=new ShildsBar(new TextureRegion(shp),mainShip,this);
+        engineTrace=new EngineTrace(et, mainShip);
+        HPbar = new HPbar(new TextureRegion(hp), mainShip, this);
+        SHPbar = new ShildsBar(new TextureRegion(shp), mainShip, this);
         enemyGenerator = new EnemyGenerator(atlas, enemyPool, worldBounds);
         messageGameOver = new MessageGameOver(atlas);
         buttonNewGame = new ButtonNewGame(atlas, this);
@@ -109,7 +116,7 @@ public class GameScreen extends BaseScreen {
         }
         music.setLooping(true);
         music.play();
-        state = State.PAYING;
+        state = State.PLAYING;
     }
 
     @Override
@@ -134,6 +141,7 @@ public class GameScreen extends BaseScreen {
         HPbar.resize(worldBounds);
         SHPbar.resize(worldBounds);
         font.setSize(FONT_SIZE);
+        engineTrace.resize(worldBounds);
     }
 
     @Override
@@ -149,12 +157,13 @@ public class GameScreen extends BaseScreen {
         explosionSound.dispose();
         hp.dispose();
         shp.dispose();
+        ETtexture.dispose();
         super.dispose();
     }
 
     @Override
     public boolean touchDown(Vector2 touch, int pointer, int button) {
-        if (state == State.PAYING) {
+        if (state == State.PLAYING) {
             mainShip.touchDown(touch, pointer, button);
         } else if (state == State.GAME_OVER) {
             buttonNewGame.touchDown(touch, pointer, button);
@@ -164,7 +173,7 @@ public class GameScreen extends BaseScreen {
 
     @Override
     public boolean touchUp(Vector2 touch, int pointer, int button) {
-        if (state == State.PAYING) {
+        if (state == State.PLAYING) {
             mainShip.touchUp(touch, pointer, button);
         } else if (state == State.GAME_OVER) {
             buttonNewGame.touchUp(touch, pointer, button);
@@ -174,7 +183,7 @@ public class GameScreen extends BaseScreen {
 
     @Override
     public boolean keyDown(int keycode) {
-        if (state == State.PAYING) {
+        if (state == State.PLAYING) {
             mainShip.keyDown(keycode);
         }
         return false;
@@ -182,7 +191,7 @@ public class GameScreen extends BaseScreen {
 
     @Override
     public boolean keyUp(int keycode) {
-        if (state == State.PAYING) {
+        if (state == State.PLAYING) {
             mainShip.keyUp(keycode);
         }
         return false;
@@ -192,7 +201,7 @@ public class GameScreen extends BaseScreen {
         enemyGenerator.setLevel(1);
         frags = 0;
 
-        state = State.PAYING;
+        state = State.PLAYING;
 
         mainShip.starNewGame();
 
@@ -206,8 +215,9 @@ public class GameScreen extends BaseScreen {
             star.update(delta);
         }
         explosionPool.updateActiveSprites(delta);
-        if (state == State.PAYING) {
+        if (state == State.PLAYING) {
             mainShip.update(delta);
+            engineTrace.update(delta);
             bulletPool.updateActiveSprites(delta);
             enemyPool.updateActiveSprites(delta);
             enemyGenerator.generate(delta, frags);
@@ -215,7 +225,7 @@ public class GameScreen extends BaseScreen {
     }
 
     private void checkCollisions() {
-        if (state != State.PAYING) {
+        if (state != State.PLAYING) {
             return;
         }
         List<EnemyShip> enemyShipList = enemyPool.getActiveObjects();
@@ -251,6 +261,7 @@ public class GameScreen extends BaseScreen {
         }
         if (mainShip.isDestroyed()) {
             state = State.GAME_OVER;
+            engineTrace.destroy();
         }
     }
 
@@ -270,8 +281,9 @@ public class GameScreen extends BaseScreen {
             star.draw(batch);
         }
         explosionPool.drawActiveSprites(batch);
-        if (state == State.PAYING) {
+        if (state == State.PLAYING) {
             mainShip.draw(batch);
+            engineTrace.draw(batch);
             bulletPool.drawActiveSprites(batch);
             enemyPool.drawActiveSprites(batch);
         } else if (state == State.GAME_OVER) {
@@ -295,5 +307,4 @@ public class GameScreen extends BaseScreen {
         font.draw(batch, sbLevel.append(LEVEL).append(enemyGenerator.getLevel()),
                 worldBounds.getRight() - FONT_PADDING, worldBounds.getTop() - FONT_PADDING, Align.right);
     }
-
 }

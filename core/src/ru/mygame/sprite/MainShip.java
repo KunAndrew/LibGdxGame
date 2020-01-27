@@ -206,4 +206,8 @@ public class MainShip extends Ship {
         v.setZero();
     }
 
+    @Override
+    public void destroy() {
+        super.destroy();
+    }
 }

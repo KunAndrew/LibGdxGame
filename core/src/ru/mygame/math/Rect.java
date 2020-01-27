@@ -75,6 +75,11 @@ public class Rect {
         pos.x = right - halfWidth;
     }
 
+    public void setCenter(float left,float bottom) {
+        pos.y = bottom + halfHeight;
+        pos.x = left + halfWidth;
+    }
+
     public void setBottom(float bottom) {
         pos.y = bottom + halfHeight;
     }
