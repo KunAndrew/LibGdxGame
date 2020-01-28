@@ -37,7 +37,7 @@ public class MainShip extends Ship {
         this.reloadInterval = 0.25f;
         this.reloadTimer = 0f;
         this.hp = HP;
-        this.shp= SHP;
+        this.shp = SHP;
     }
 
     public void starNewGame() {
@@ -81,19 +81,19 @@ public class MainShip extends Ship {
     @Override
     public void damage(int damage) {
 
-        int temp=shp-damage;
+        int temp = shp - damage;
 
-        if (temp>0) {
+        if (temp > 0) {
             shp -= damage;
-        }else {
-            shp=0;
+        } else {
+            shp = 0;
             hp += temp;
             if (hp <= 0) {
                 destroy();
                 hp = 0;
             }
         }
-        temp=0;
+        temp = 0;
         frame = 1;
         damageAnimateTimer = 0f;
 
@@ -186,6 +186,15 @@ public class MainShip extends Ship {
         );
     }
 
+    public boolean isBonusCollision(Rect bonus) {
+        return !(
+                bonus.getRight() < getLeft()
+                        || bonus.getLeft() > getRight()
+                        || bonus.getBottom() > pos.y
+                        || bonus.getTop() < getBottom()
+        );
+    }
+
     public int getHP() {
         return hp;
     }
@@ -209,5 +218,10 @@ public class MainShip extends Ship {
     @Override
     public void destroy() {
         super.destroy();
+    }
+
+    public void collisionBonus(int bonus) {
+        hp += bonus;
+        if (hp > HP) hp = HP;
     }
 }

@@ -15,10 +15,12 @@ import java.util.List;
 import ru.mygame.base.BaseScreen;
 import ru.mygame.base.Font;
 import ru.mygame.math.Rect;
+import ru.mygame.pool.BonusPool;
 import ru.mygame.pool.BulletPool;
 import ru.mygame.pool.EnemyPool;
 import ru.mygame.pool.ExplosionPool;
 import ru.mygame.sprite.Background;
+import ru.mygame.sprite.Bonus;
 import ru.mygame.sprite.Bullet;
 import ru.mygame.sprite.ButtonNewGame;
 import ru.mygame.sprite.EnemyShip;
@@ -29,6 +31,7 @@ import ru.mygame.sprite.MessageGameOver;
 import ru.mygame.sprite.ShildsBar;
 import ru.mygame.sprite.Star;
 import ru.mygame.sprite.TrackingStar;
+import ru.mygame.utils.BonusGenerator;
 import ru.mygame.utils.EnemyGenerator;
 
 public class GameScreen extends BaseScreen {
@@ -41,11 +44,13 @@ public class GameScreen extends BaseScreen {
     private static final String SHP = "SHP: ";
     private static final String LEVEL = "Level: ";
     private Texture ETtexture;
+    private Texture bonusTexture;
 
     private enum State {PLAYING, GAME_OVER}
 
     private Texture bg;
     private TextureAtlas atlas;
+    private TextureAtlas atlas2;
     private Texture hp;
     private Texture shp;
     private TextureRegion et;
@@ -58,6 +63,7 @@ public class GameScreen extends BaseScreen {
     private MainShip mainShip;
     private EngineTrace engineTrace;
 
+    private BonusPool bonusPool;
     private BulletPool bulletPool;
     private EnemyPool enemyPool;
     private ExplosionPool explosionPool;
@@ -68,6 +74,7 @@ public class GameScreen extends BaseScreen {
     private Sound explosionSound;
 
     private EnemyGenerator enemyGenerator;
+    private BonusGenerator bonusGenerator;
 
     private State state;
 
@@ -92,18 +99,21 @@ public class GameScreen extends BaseScreen {
         et = new TextureRegion(ETtexture);
         background = new Background(new TextureRegion(bg));
         atlas = new TextureAtlas(Gdx.files.internal("textures/mainAtlas.tpack"));
+        atlas2 = new TextureAtlas(Gdx.files.internal("textures/testpack.atlas"));
         laserSound = Gdx.audio.newSound(Gdx.files.internal("sounds/laser.wav"));
         bulletSound = Gdx.audio.newSound(Gdx.files.internal("sounds/bullet.wav"));
         explosionSound = Gdx.audio.newSound(Gdx.files.internal("sounds/explosion.wav"));
         music = Gdx.audio.newMusic(Gdx.files.internal("sounds/music.mp3"));
         bulletPool = new BulletPool();
+        bonusPool = new BonusPool(worldBounds);
         explosionPool = new ExplosionPool(atlas, explosionSound);
         enemyPool = new EnemyPool(bulletPool, explosionPool, bulletSound, worldBounds);
         mainShip = new MainShip(atlas, bulletPool, explosionPool, laserSound);
-        engineTrace=new EngineTrace(et, mainShip);
+        engineTrace = new EngineTrace(et, mainShip);
         HPbar = new HPbar(new TextureRegion(hp), mainShip, this);
         SHPbar = new ShildsBar(new TextureRegion(shp), mainShip, this);
         enemyGenerator = new EnemyGenerator(atlas, enemyPool, worldBounds);
+        bonusGenerator = new BonusGenerator(atlas2, bonusPool, worldBounds);
         messageGameOver = new MessageGameOver(atlas);
         buttonNewGame = new ButtonNewGame(atlas, this);
         font = new Font("font/font.fnt", "font/font.png");
@@ -147,10 +157,12 @@ public class GameScreen extends BaseScreen {
     @Override
     public void dispose() {
         atlas.dispose();
+        atlas2.dispose();
         bg.dispose();
         bulletPool.dispose();
         explosionPool.dispose();
         enemyPool.dispose();
+        bonusPool.dispose();
         music.dispose();
         laserSound.dispose();
         bulletSound.dispose();
@@ -208,6 +220,7 @@ public class GameScreen extends BaseScreen {
         bulletPool.freeAllActiveObjects();
         explosionPool.freeAllActiveObjects();
         enemyPool.freeAllActiveObjects();
+        bonusPool.freeAllActiveObjects();
     }
 
     private void update(float delta) {
@@ -220,7 +233,9 @@ public class GameScreen extends BaseScreen {
             engineTrace.update(delta);
             bulletPool.updateActiveSprites(delta);
             enemyPool.updateActiveSprites(delta);
+            bonusPool.updateActiveSprites(delta);
             enemyGenerator.generate(delta, frags);
+            bonusGenerator.generate(delta);
         }
     }
 
@@ -259,6 +274,14 @@ public class GameScreen extends BaseScreen {
                 }
             }
         }
+        List<Bonus> bonustList = bonusPool.getActiveObjects();
+        for (Bonus bonus : bonustList) {
+            if (mainShip.isBonusCollision(bonus)) {
+                mainShip.collisionBonus(bonus.getAmountBonus());
+                bonus.destroy();
+            }
+        }
+
         if (mainShip.isDestroyed()) {
             state = State.GAME_OVER;
             engineTrace.destroy();
@@ -269,6 +292,7 @@ public class GameScreen extends BaseScreen {
         bulletPool.freeAllDestroyedActiveObjects();
         explosionPool.freeAllDestroyedActiveObjects();
         enemyPool.freeAllDestroyedActiveObjects();
+        bonusPool.freeAllDestroyedActiveObjects();
     }
 
     private void draw() {
@@ -286,6 +310,7 @@ public class GameScreen extends BaseScreen {
             engineTrace.draw(batch);
             bulletPool.drawActiveSprites(batch);
             enemyPool.drawActiveSprites(batch);
+            bonusPool.drawActiveSprites(batch);
         } else if (state == State.GAME_OVER) {
             messageGameOver.draw(batch);
             buttonNewGame.draw(batch);
