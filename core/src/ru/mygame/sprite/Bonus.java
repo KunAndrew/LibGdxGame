@@ -7,14 +7,20 @@ import ru.mygame.base.Sprite;
 import ru.mygame.math.Rect;
 
 public class Bonus extends Sprite {
-    private static final int AMOUNT = 20;
+    public enum BonusType {HP, SP}
+
+    ;
+    private BonusType type;
+    private static final int HP_AMOUNT = 20;
+    private static final int SHP_AMOUNT = 10;
     protected Vector2 v;
     protected Rect worldBounds;
     private Vector2 descentV = new Vector2(0, -0.15f);
 
-    public Bonus(Rect worldBounds) {
+    public Bonus(Rect worldBounds, BonusType type) {
         this.worldBounds = worldBounds;
         this.v = descentV;
+        this.type = type;
     }
 
     @Override
@@ -32,6 +38,14 @@ public class Bonus extends Sprite {
     }
 
     public int getAmountBonus() {
-        return AMOUNT;
+        if (type == BonusType.HP) {
+            return HP_AMOUNT;
+        } else {
+            return SHP_AMOUNT;
+        }
+    }
+
+    public BonusType getType() {
+        return type;
     }
 }

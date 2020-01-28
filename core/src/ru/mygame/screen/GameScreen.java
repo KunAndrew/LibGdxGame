@@ -99,7 +99,7 @@ public class GameScreen extends BaseScreen {
         et = new TextureRegion(ETtexture);
         background = new Background(new TextureRegion(bg));
         atlas = new TextureAtlas(Gdx.files.internal("textures/mainAtlas.tpack"));
-        atlas2 = new TextureAtlas(Gdx.files.internal("textures/testpack.atlas"));
+        atlas2 = new TextureAtlas(Gdx.files.internal("textures/gameAtlas.pack"));
         laserSound = Gdx.audio.newSound(Gdx.files.internal("sounds/laser.wav"));
         bulletSound = Gdx.audio.newSound(Gdx.files.internal("sounds/bullet.wav"));
         explosionSound = Gdx.audio.newSound(Gdx.files.internal("sounds/explosion.wav"));
@@ -277,7 +277,7 @@ public class GameScreen extends BaseScreen {
         List<Bonus> bonustList = bonusPool.getActiveObjects();
         for (Bonus bonus : bonustList) {
             if (mainShip.isBonusCollision(bonus)) {
-                mainShip.collisionBonus(bonus.getAmountBonus());
+                mainShip.collisionBonus(bonus);
                 bonus.destroy();
             }
         }

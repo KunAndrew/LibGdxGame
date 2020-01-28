@@ -220,8 +220,13 @@ public class MainShip extends Ship {
         super.destroy();
     }
 
-    public void collisionBonus(int bonus) {
-        hp += bonus;
-        if (hp > HP) hp = HP;
+    public void collisionBonus(Bonus bonus) {
+        if (bonus.getType() == Bonus.BonusType.HP) {
+            hp += bonus.getAmountBonus();
+            if (hp > HP) hp = HP;
+        } else {
+            shp += bonus.getAmountBonus();
+            if (shp > SHP) shp = SHP;
+        }
     }
 }

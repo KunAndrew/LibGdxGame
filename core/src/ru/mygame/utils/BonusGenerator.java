@@ -12,8 +12,9 @@ public class BonusGenerator {
     private static final float BONUS_HEIGHT = 0.065f;
 
     private final TextureRegion[] bonusRegion;
+    private final TextureRegion[] bonusRegion2;
 
-    private float generateInterval = 8f;
+    private float generateInterval = 16f;
     private float generateTimer = generateInterval;
 
     private BonusPool bonusPool;
@@ -21,7 +22,9 @@ public class BonusGenerator {
 
     public BonusGenerator(TextureAtlas atlas, BonusPool bonusPool, Rect worldBounds) {
         TextureRegion bonus = atlas.findRegion("HP_Bonus");
+        TextureRegion bonus2 = atlas.findRegion("Shields_Bonus");
         this.bonusRegion = Regions.split(bonus, 1, 1, 1);
+        this.bonusRegion2 = Regions.split(bonus2, 1, 1, 1);
         this.bonusPool = bonusPool;
         this.worldBounds = worldBounds;
     }
@@ -31,7 +34,11 @@ public class BonusGenerator {
         if (generateTimer > generateInterval) {
             generateTimer = 0f;
             Bonus bonus = bonusPool.obtain();
-            bonus.set(bonusRegion, BONUS_HEIGHT);
+            if (bonus.getType() == Bonus.BonusType.HP) {
+                bonus.set(bonusRegion, BONUS_HEIGHT);
+            } else {
+                bonus.set(bonusRegion2, BONUS_HEIGHT);
+            }
             bonus.pos.x = Rnd.nextFloat(
                     worldBounds.getLeft() + bonus.getHalfWidth(),
                     worldBounds.getRight() - bonus.getHalfWidth()
