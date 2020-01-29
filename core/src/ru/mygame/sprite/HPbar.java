@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import ru.mygame.base.BaseScreen;
 import ru.mygame.base.Sprite;
 import ru.mygame.math.Rect;
+import ru.mygame.screen.GameScreen;
 
 public class HPbar extends Sprite {
     private MainShip mainship;
@@ -17,8 +18,9 @@ public class HPbar extends Sprite {
     public void resize(Rect worldBounds) {
         super.resize(worldBounds);
         setHeightProportion(0.025f);
+        setWidth(worldBounds.getWidth()-2* GameScreen.getFontPadding());
         setBottom(worldBounds.getBottom() + 0.01f);
-        setLeft(worldBounds.getLeft());
+        setLeft(worldBounds.getLeft()+ GameScreen.getFontPadding());
     }
 
     @Override

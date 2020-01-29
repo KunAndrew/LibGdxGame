@@ -37,14 +37,13 @@ import ru.mygame.utils.EnemyGenerator;
 public class GameScreen extends BaseScreen {
 
     private static final float FONT_PADDING = 0.01f;
-    private static final float FONT_SIZE = 0.02f;
+    private static final float FONT_SIZE = 0.025f;
 
     private static final String FRAGS = "Frags: ";
     private static final String HP = "HP: ";
     private static final String SHP = "SHP: ";
     private static final String LEVEL = "Level: ";
     private Texture ETtexture;
-    private Texture bonusTexture;
 
     private enum State {PLAYING, GAME_OVER}
 
@@ -117,6 +116,7 @@ public class GameScreen extends BaseScreen {
         messageGameOver = new MessageGameOver(atlas);
         buttonNewGame = new ButtonNewGame(atlas, this);
         font = new Font("font/font.fnt", "font/font.png");
+        font.setSize(FONT_SIZE);
         sbFrags = new StringBuilder();
         sbHp = new StringBuilder();
         sbLevel = new StringBuilder();
@@ -150,7 +150,6 @@ public class GameScreen extends BaseScreen {
         buttonNewGame.resize(worldBounds);
         HPbar.resize(worldBounds);
         SHPbar.resize(worldBounds);
-        font.setSize(FONT_SIZE);
         engineTrace.resize(worldBounds);
     }
 
@@ -296,7 +295,7 @@ public class GameScreen extends BaseScreen {
     }
 
     private void draw() {
-        Gdx.gl.glClearColor(0.2f, 0.6f, 0.5f, 1);
+        Gdx.gl.glClearColor(0.0f, 0.0f, 0.2f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         batch.begin();
@@ -331,5 +330,9 @@ public class GameScreen extends BaseScreen {
         SHPbar.draw(batch);
         font.draw(batch, sbLevel.append(LEVEL).append(enemyGenerator.getLevel()),
                 worldBounds.getRight() - FONT_PADDING, worldBounds.getTop() - FONT_PADDING, Align.right);
+    }
+
+    public static float getFontPadding() {
+        return FONT_PADDING;
     }
 }
