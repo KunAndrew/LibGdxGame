@@ -22,7 +22,6 @@ public class ShildsBar extends Sprite {
         setWidth(worldBounds.getWidth() - 2 * GameScreen.getFontPadding());
         setBottom(worldBounds.getBottom() + 0.04f);
         setLeft(worldBounds.getLeft() + GameScreen.getFontPadding());
-
     }
 
     @Override
