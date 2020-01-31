@@ -54,13 +54,6 @@ public class Sprite extends Rect {
                 getWidth()*percent, getHeight(),
                 scale, scale,
                 angle
-
-                /*regions[frame],
-                getLeft(), getBottom(),
-                halfWidth, halfHeight,
-                getWidth(), getHeight(),
-                scale*percent, scale,
-                angle*/
         );
     }
 

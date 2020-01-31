@@ -118,10 +118,9 @@ public class GameScreen extends BaseScreen {
         engineTrace = new EngineTrace(et, mainShip);
         HPbar = new HPbar(new TextureRegion(hp), mainShip, this);
         SHPbar = new ShildsBar(new TextureRegion(shp), mainShip, this);
-        planetPool = new PlanetPool(worldBounds);
+        planetPool = new PlanetPool(worldBounds,mainShip);
         backgraundPlanetGenerator=new BackgraundPlanetGenerator(planetAtlas, planetPool,worldBounds);
         enemyGenerator = new EnemyGenerator(atlas, enemyPool, worldBounds);
-      //  planet=new Planet(worldBounds);
         bonusGenerator = new BonusGenerator(atlas2, bonusPool, worldBounds);
         messageGameOver = new MessageGameOver(atlas);
         buttonNewGame = new ButtonNewGame(atlas, this);
@@ -161,7 +160,6 @@ public class GameScreen extends BaseScreen {
         HPbar.resize(worldBounds);
         SHPbar.resize(worldBounds);
         engineTrace.resize(worldBounds);
-     //   planet.resize(worldBounds);
     }
 
     @Override
@@ -224,11 +222,8 @@ public class GameScreen extends BaseScreen {
     public void startNewGame() {
         enemyGenerator.setLevel(1);
         frags = 0;
-
         state = State.PLAYING;
-
         mainShip.starNewGame();
-
         bulletPool.freeAllActiveObjects();
         explosionPool.freeAllActiveObjects();
         enemyPool.freeAllActiveObjects();

@@ -7,27 +7,26 @@ import ru.mygame.base.Sprite;
 import ru.mygame.math.Rect;
 
 public class Planet extends Sprite {
+
+    private Vector2 trackingV;
+    private Vector2 sumV;
     public Rect worldBounds;
-    private Vector2 descentV = new Vector2(0, -0.3f);
-    public Planet(Rect worldBounds) {
+    private Vector2 descentV = new Vector2(0, -0.08f);
+    public Planet(Rect worldBounds, Vector2 trackingV) {
         this.worldBounds=worldBounds;
+        this.trackingV = trackingV;
+        this.sumV = new Vector2();
     }
 
     public void set(TextureRegion[] region,float bonusHeight){
         this.regions = region;
         setHeightProportion(bonusHeight);
 }
-//    @Override
-//    public void resize(Rect worldBounds) {
-//        super.resize(worldBounds);
-//        setHeightProportion(0.8f);
-//        setRight(worldBounds.getRight()+getHalfWidth()*0.75f);
-//    }
 
     @Override
     public void update(float delta) {
-        super.update(delta);
-        pos.mulAdd(descentV, delta);
+        sumV.setZero().mulAdd(trackingV, 0.1f).rotate(180).add(descentV);
+        pos.mulAdd(sumV, delta);
         if (getTop() < worldBounds.getBottom()) {
             destroy();
         }
