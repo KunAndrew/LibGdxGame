@@ -42,8 +42,8 @@ public class EnemyShip extends Ship {
                     reloadTimer = 0f;
                     shoot();
                 }
-                if (getBottom() < worldBounds.getBottom()) {
-                    destroy();
+                if (getTop() < worldBounds.getBottom()) {
+                    destroyWithoutBoom();
                 }
                 break;
         }

@@ -70,6 +70,9 @@ public class Ship extends Sprite {
         return v;
     }
 
+    public void destroyWithoutBoom(){
+        super.destroy();
+    }
     @Override
     public void destroy() {
         super.destroy();
