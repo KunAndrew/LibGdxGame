@@ -8,9 +8,13 @@ Space Shooter is small game similar to retro shooters. This game made on the bas
 ## Game Installation
 The game is available on PC and Android.
 
+### PC:
+Download [SpaceShooter.jar](https://github.com/KunAndrew/LibGdxGame/releases/latest/download/SpaceShooter.jar).
+Play.
+
 ### Android:
 Turn on USB debugging on your device (developer mode required).
-Download and install apk-file https://github.com/KunAndrew/LibGdxGame/blob/master/android/assets/res/AndroidSpaceShooter.apk.
+Download and install [AndroidSpaceShooter.apk](https://github.com/KunAndrew/LibGdxGame/releases/latest/download/AndroidSpaceShooter.apk).
 
 
 
