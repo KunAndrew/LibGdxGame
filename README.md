@@ -10,13 +10,13 @@ The game is available on PC and Android.
 
 ### PC:
 Download [SpaceShooter.jar](https://github.com/KunAndrew/LibGdxGame/releases/latest/download/SpaceShooter.jar).
+
 Play.
 
 ### Android:
 Turn on USB debugging on your device (developer mode required).
+
 Download and install [AndroidSpaceShooter.apk](https://github.com/KunAndrew/LibGdxGame/releases/latest/download/AndroidSpaceShooter.apk).
-
-
 
 ![Menu](https://github.com/KunAndrew/LibGdxGame/blob/master/android/assets/res/MainScreen.gif "Menu Screen")
 
